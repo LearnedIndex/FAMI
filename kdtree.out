@@ -1,0 +1,164 @@
+osm
+build/s: 22.214
+testcnt: 3
+lookup/ns: 3629931
+total_cnt: 496119
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 60.4903
+testcnt: 3
+lookup/ns: 8075605
+total_cnt: 921462
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 167.434
+testcnt: 3
+lookup/ns: 19094592
+total_cnt: 1794531
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 481.313
+testcnt: 3
+lookup/ns: 50432224
+total_cnt: 3479389
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 1323.33
+testcnt: 3
+lookup/ns: 143178424
+total_cnt: 7034546
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 4150.57
+testcnt: 3
+lookup/ns: 303281427
+total_cnt: 14308625
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 13728.1
+testcnt: 3
+lookup/ns: 1179221075
+total_cnt: 30894086
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+
+uniform
+build/s: 9.47639
+testcnt: 3
+lookup/ns: 953839
+total_cnt: 7241
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 20.9625
+testcnt: 3
+lookup/ns: 1942075
+total_cnt: 13500
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 46.4033
+testcnt: 3
+lookup/ns: 3838264
+total_cnt: 25870
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 97.9232
+testcnt: 3
+lookup/ns: 7583777
+total_cnt: 50355
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 221.227
+testcnt: 3
+lookup/ns: 16083817
+total_cnt: 101020
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 470.5
+testcnt: 3
+lookup/ns: 34167121
+total_cnt: 199888
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 1017.63
+testcnt: 3
+lookup/ns: 72440256
+total_cnt: 399105
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+
+
+normal
+build/s: 9.40609
+testcnt: 3
+lookup/ns: 2749509
+total_cnt: 46920
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 21.1761
+testcnt: 3
+lookup/ns: 5731867
+total_cnt: 93863
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 45.439
+testcnt: 3
+lookup/ns: 10981995
+total_cnt: 178369
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 101.919
+testcnt: 3
+lookup/ns: 23379667
+total_cnt: 383967
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 219.563
+testcnt: 3
+lookup/ns: 51337052
+total_cnt: 777145
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 468.258
+testcnt: 3
+lookup/ns: 113474143
+total_cnt: 1613430
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 999.235
+testcnt: 3
+lookup/ns: 250217404
+total_cnt: 3412543
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+
+
+taxi
+build/s: 9.4645
+testcnt: 3
+lookup/ns: 18788914228
+total_cnt: 262456495
+knn_query_cnt/bs_distance: 0
+spline_duration: 0
+0
+build/s: 21.9203

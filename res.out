@@ -1,0 +1,59 @@
+root@labserver0:/share/multi-D/grid/FAMI# ./main /share/wangruixin/datasets/OSM/OSMrandom.txt 1000000 1000000 2 7 grid+r-tree 18 100 200 0 400 1 1000
+cluster_num: 1000
+accuracy: 1
+item_cnt 1000000
+divide_err 821.214
+build/s: 1300.08
+lookup/ns: 22184
+total_cnt: 1000004
+255
+root@labserver0:/share/multi-D/grid/FAMI# ./main /share/wangruixin/datasets/OSM/OSMrandom.txt 1000000 1000000 2 7 grid+r-tree 18 100 200 0 400 1 1000
+cluster_num: 1000
+accuracy: 1
+item_cnt 1000000
+divide_err 821.976
+build/s: 1400.58
+lookup/ns: 22379
+total_cnt: 1000004
+255
+root@labserver0:/share/multi-D/grid/FAMI# g++ main.cpp -o main  -I. -l spatialindex -lpthread -O2
+root@labserver0:/share/multi-D/grid/FAMI# ./main /share/wangruixin/datasets/OSM/OSMrandom.txt 1000000 1000000 2 7 grid+r-tree 18 100 200 0 400 1 1000
+cluster_num: 1000
+accuracy: 1
+item_cnt 1000000
+divide_err 821.214
+build/s: 1301.52
+lookup/ns: 1278
+total_cnt: 0
+1023
+root@labserver0:/share/multi-D/grid/FAMI# g++ main.cpp -o main  -I. -l spatialindex -lpthread -O2
+root@labserver0:/share/multi-D/grid/FAMI# ./main /share/wangruixin/datasets/OSM/OSMrandom.txt 1000000 1000000 2 7 grid+r-tree 18 100 200 0 400 1 1000
+cluster_num: 1000
+accuracy: 1
+item_cnt 1000000
+divide_err 821.976
+build/s: 1400.85
+lookup/ns: 1398
+total_cnt: 0
+1023
+root@labserver0:/share/multi-D/grid/FAMI# ./main /share/wangruixin/datasets/OSM/OSMrandom.txt 1000000 1000000 2 7 grid+r-tree 18 100 200 0 400 1 1000
+size[MB]: 0.788
+accuracy: 0.999892
+item_cnt 1000000
+divide_err 1.99333
+build/s: 0.624111
+lookup/ns: 2127
+total_cnt: 1000004
+2147483616
+root@labserver0:/share/multi-D/grid/FAMI# ./main /share/wangruixin/datasets/OSM/OSMrandom.txt 1000000 1000000 2 7 grid+r-tree 18 100 200 0 400 1 1000
+size[MB]: 0.788
+accuracy: 0.999892
+item_cnt 1000000
+divide_err 1.99333
+build/s: 0.620972
+lookup/ns: 149
+total_cnt: 0
+127
+
+
+

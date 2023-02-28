@@ -1,0 +1,186 @@
+#pragma once
+
+#include <iterator>
+#include <limits>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <cstring>
+#include <math.h>
+#include "grid_file_builder.h"
+#include "grid_file.h"
+#include "rtree.h"
+#include "rtree_objects.h"
+#include <spatialindex/SpatialIndex.h>
+#include "dkm/include/dkm.hpp"
+
+namespace mdm
+{
+  class MyVisitor : public SpatialIndex::IVisitor
+  {
+  public:
+    void visitNode(const SpatialIndex::INode & /* n */) override {}
+
+    void visitData(const SpatialIndex::IData &d) override
+    {
+      // std::cout << d.getIdentifier() << std::endl;
+      rstar_res.push_back(d.getIdentifier());
+      // the ID of this data entry is an answer to the query. I will just print it to stdout.
+    }
+
+    void visitData(std::vector<const SpatialIndex::IData *> & /* v */) override {}
+  };
+
+  template <class KeyType>
+  class MultiDMap
+  {
+  public:
+    MultiDMap(std::vector<std::vector<KeyType>> data, size_t num_radix_bits = 18, size_t cell_size = 100, size_t rs_group_size = 200, size_t exp = 0, size_t cluster_num = 10)
+        : num_radix_bits_(num_radix_bits),
+          group_size_(std::sqrt(data.size() * cell_size)),
+          rs_group_size_(rs_group_size),
+          cell_size_(cell_size),
+          exp_(exp),
+          cluster_num_(cluster_num)
+    {
+      size_t n = data.size();
+      group_size_ = sqrt(n * cell_size_);
+      data_.resize(n, std::array<float, 2>());
+      for (int i = 0; i < n; i++)
+      {
+        data_[i][0] = data[i][0];
+        data_[i][1] = data[i][1];
+      }
+      // cluster_num_ = pow(group_size_ / cell_size_ + 1, 2);
+      std::cout << "cluster_num: " << cluster_num_ << std::endl;
+      rtrees_.resize(cluster_num_);
+      for (int i = 0; i < cluster_num_; i++)
+      {
+        rtrees_[i] = RTree<float>(20);
+      }
+      std::sort(data_.begin(), data_.end(), [](const std::array<float, 2> &a, const std::array<float, 2> &b)
+                { return a[0] < b[0]; });
+      cluster_data = dkm::kmeans_lloyd(data_, cluster_num_);
+      int h[130] = {0};
+      for (int i = 0; i < n; i++)
+      {
+        h[std::get<1>(cluster_data)[i]]++;
+      }
+      for (int i = 0; i < n; i++)
+      {
+        pols_.push_back(Polygon<float>(Point<float>(data_[i][0], data_[i][1])));
+      }
+      for (int i = 0; i < n; i++)
+      {
+        // uint32_t rtindex = dkm::details::closest_mean(data_[i],std::get<0>(cluster_data));
+        // std::cout << std::get<1>(cluster_data)[i] << std::endl;
+        rtrees_[std::get<1>(cluster_data)[i]].insert_polygon(&pols_[i], &pols_[i]);
+      }
+      int cnt = 0;
+      float err = 0;
+      for (int i = 0; i < cluster_num_; i++)
+      {
+        cnt += rtrees_[i].get_items_cnt();
+        err += abs(rtrees_[i].get_items_cnt() - int(n / cluster_num_));
+      }
+      err /= cluster_num_;
+      std::cout << "accuracy: " << (cnt - gf::error_cnt) / 1.0 / cnt << std::endl;
+      std::cout << "item_cnt " << cnt << std::endl;
+      std::cout << "divide_err " << err << std::endl;
+    }
+    uint_fast64_t find(std::vector<KeyType> key)
+    {
+      std::array<float, 2> point;
+      point[0] = key[0];
+      point[1] = key[1];
+      uint32_t rtindex = dkm::details::closest_mean(point, std::get<0>(cluster_data));
+      std::vector<Polygon<float> *> answ;
+      rtrees_[rtindex].range_search(Polygon<float>(Point<float>(point[0], point[1])), answ);
+      total_cnt += answ.size();
+      if (answ[0]->get_Pmin().get_X() != point[0])
+      {
+        exit(-1);
+      }
+      return answ[0]->get_Pmin().get_X();
+      // return rtindex;
+    }
+
+    // void insert(std::vector<KeyType> key)
+    // {
+    //   std::vector<uint64_t> key_(2);
+    //   key_[0] = round(key[0] * ratio_);
+    //   key_[1] = round(key[1] * ratio_);
+    //   std::vector<uint_fast32_t> rtindex = gf_.GetCoord(key_);
+
+    //   pols_.push_back(Polygon<uint64_t>(Point<uint64_t>(key_[0], key_[1])));
+    //   rtrees_[rtindex[0]][rtindex[1]].insert_polygon(&pols_.back(), &pols_.back());
+    // }
+
+    // uint_fast64_t range_search(std::vector<KeyType> begin, std::vector<KeyType> end)
+    // {
+    //   std::vector<uint64_t> begin_(2);
+    //   begin_[0] = round(begin[0] * ratio_);
+    //   begin_[1] = round(begin[1] * ratio_);
+    //   std::vector<uint64_t> end_(2);
+    //   end_[0] = round(end[0] * ratio_);
+    //   end_[1] = round(end[1] * ratio_);
+    //   std::vector<Polygon<uint64_t> *> total_answ;
+
+    //   // std::vector<uint_fast32_t> btindex = gf_.GetCoord(begin_);
+    //   // std::vector<uint_fast32_t> etindex = gf_.GetCoord(end_);
+    //   // for (int i = btindex[0]; i <= etindex[0]; i++)
+    //   // {
+    //   //   for (int j = btindex[1]; j <= etindex[1]; j++)
+    //   //   {
+    //   //     std::vector<Polygon<uint64_t> *> answ;
+    //   //     rtrees_[i][j].range_search(Polygon<uint64_t>(Point<uint64_t>(begin_[0], begin_[1]), Point<uint64_t>(end_[0], end_[1])), answ);
+    //   //     total_answ.insert(total_answ.end(), answ.begin(), answ.end());
+    //   //   }
+    //   // }
+
+    //   uint_fast32_t bx = gf_.GetCoordX(begin_[0]);
+    //   uint_fast32_t ex = gf_.GetCoordX(end_[0]);
+    //   for (int i = bx; i <= ex; i++)
+    //   {
+    //     uint_fast32_t by = gf_.GetCoordY(i, begin_[1]);
+    //     uint_fast32_t ey = gf_.GetCoordY(i, end_[1]);
+    //     for (int j = by; j <= ey; j++)
+    //     {
+    //       std::vector<Polygon<uint64_t> *> answ;
+    //       rtrees_[i][j].range_search(Polygon<uint64_t>(Point<uint64_t>(begin_[0], begin_[1]), Point<uint64_t>(end_[0], end_[1])), answ);
+    //       total_answ.insert(total_answ.end(), answ.begin(), answ.end());
+    //     }
+    //   }
+    //   total_cnt += total_answ.size();
+    //   // for (int i = 0; i < total_answ.size(); i++)
+    //   // {
+    //   //   uint64_t x = total_answ[i]->get_Pmin().get_X();
+    //   //   uint64_t y = total_answ[i]->get_Pmin().get_Y();
+    //   //   if (x < begin_[0] || y < begin_[1] || x > end_[0] || y > end_[1])
+    //   //   {
+    //   //     printf("error\n");
+    //   //     exit(-1);
+    //   //   }
+    //   // }
+    //   return total_answ[0]->get_Pmin().get_X();
+    //   // return begin_[0];
+    // }
+
+  private:
+    std::vector<std::array<float, 2>> data_;
+    std::vector<Polygon<float>> pols_;
+    // std::vector<std::vector<RTree<uint64_t>>> rtrees_;
+    std::vector<RTree<float>> rtrees_;
+    std::tuple<std::vector<std::array<float, 2>>, std::vector<uint32_t>> cluster_data;
+    // std::unordered_map<uint64_t, SpatialIndex::ISpatialIndex *> rtrees_;
+    // std::unordered_map<uint64_t, int64_t> indexIdentifier_;
+    gf::GridFile<uint64_t> gf_;
+    const size_t num_radix_bits_;
+    size_t group_size_;
+    size_t rs_group_size_;
+    size_t cell_size_;
+    size_t exp_;
+    size_t ratio_;
+    size_t cluster_num_;
+  };
+} // namespace mdm
